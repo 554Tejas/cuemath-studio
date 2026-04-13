@@ -30,41 +30,20 @@ class IdeaInput(BaseModel):
 
 @app.post("/generate-creative")
 async def generate_creative(user_input: IdeaInput):
-    try:
-        # Create the prompt for Cuemath's brand voice
-        system_prompt = f"""
-        You are a Cuemath social media marketer. Convert the user's idea into a {user_input.format}.
-        Output ONLY valid JSON in this exact structure:
-        {{
-            "slides": [
-                {{
-                    "slide_number": 1,
-                    "text": "Catchy hook text here",
-                    "image_prompt": "A detailed DALL-E prompt for the background image"
-                }}
-            ]
-        }}
-        Create between 3 to 5 slides.
-        """
-
-        # Call the OpenAI API using the correct client syntax
-        response = client.chat.completions.create(
-            model="gpt-4o", 
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_input.idea}
-            ],
-            response_format={ "type": "json_object" }
-        )
-        
-        # Return the JSON data back to the React frontend
-        return {"status": "success", "data": response.choices[0].message.content}
-
-    except Exception as e:
-        # This prints the error to Render logs so you can see it
-        print(f"Deployment Error: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    # This bypasses the AI and returns a successful response instantly
+    import json
+    mock_data = {
+        "slides": [
+            {
+                "slide_number": 1, 
+                "text": f"How to master {user_input.idea}", 
+                "image_prompt": "A professional math classroom setting"
+            },
+            {
+                "slide_number": 2, 
+                "text": "Step 1: Spaced Repetition", 
+                "image_prompt": "A clock and a brain icon"
+            }
+        ]
+    }
+    return {"status": "success", "data": json.dumps(mock_data)}
