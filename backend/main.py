@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from openai import OpenAI
+import os
 from dotenv import load_dotenv
 
 api_key = os.getenv("OPENAI_API_KEY")
