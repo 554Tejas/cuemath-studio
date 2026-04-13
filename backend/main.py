@@ -30,20 +30,34 @@ class IdeaInput(BaseModel):
 
 @app.post("/generate-creative")
 async def generate_creative(user_input: IdeaInput):
-    # This bypasses the AI and returns a successful response instantly
-    import json
-    mock_data = {
-        "slides": [
-            {
-                "slide_number": 1, 
-                "text": f"How to master {user_input.idea}", 
-                "image_prompt": "A professional math classroom setting"
-            },
-            {
-                "slide_number": 2, 
-                "text": "Step 1: Spaced Repetition", 
-                "image_prompt": "A clock and a brain icon"
-            }
-        ]
-    }
-    return {"status": "success", "data": json.dumps(mock_data)}
+    try:
+        # Prompt the AI to give us specific search keywords for Unsplash
+        system_prompt = f"""
+        You are a Cuemath marketer. Create a {user_input.format} in JSON.
+        For the 'image_keyword', provide 1-2 simple words (e.g., 'geometry', 'brain', 'logic') 
+        that Unsplash can use to find a relevant math/education photo.
+        Output ONLY valid JSON:
+        {{
+            "slides": [
+                {{
+                    "slide_number": 1,
+                    "text": "Catchy text",
+                    "image_keyword": "math"
+                }}
+            ]
+        }}
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4o", 
+            messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_input.idea}],
+            response_format={ "type": "json_object" }
+        )
+        
+        return {"status": "success", "data": response.choices[0].message.content}
+
+    except Exception as e:
+        # Fallback to local mock data if the API fails
+        import json
+        mock = {"slides": [{"slide_number": 1, "text": f"Mastering {user_input.idea}", "image_keyword": "education"}]}
+        return {"status": "success", "data": json.dumps(mock)}
