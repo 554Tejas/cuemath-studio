@@ -9,7 +9,7 @@ function App() {
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8000/generate-creative', {
+      const response = await axios.post('https://cuemath-studio-2.onrender.com/generate-creative', {
         idea: idea,
         format: 'carousel'
       });
