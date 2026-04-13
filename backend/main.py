@@ -37,37 +37,18 @@ class IdeaInput(BaseModel):
 @app.post("/generate-creative")
 async def generate_creative(user_input: IdeaInput):
     try:
-        # The prompt forces the LLM to act as a marketer and output strict JSON
-        system_prompt = f"""
-        You are a Cuemath social media marketer. Convert the user's idea into a {user_input.format}.
-        Output ONLY valid JSON in this exact structure:
-        {{
-            "slides": [
-                {{
-                    "slide_number": 1,
-                    "text": "Catchy hook text here",
-                    "image_prompt": "A detailed DALL-E prompt for the background image"
-                }}
-            ]
-        }}
-        Create between 3 to 5 slides.
-        """
-
+        # 2. Use 'client.chat.completions', NOT 'openai.ChatCompletion'
         response = client.chat.completions.create(
-            model="gpt-4o", # Or claude-3-haiku via Anthropic
-            response_format={ "type": "json_object" },
+            model="gpt-4o",
             messages=[
-                {"role": "system", "content": system_prompt},
+                {"role": "system", "content": "You are a Cuemath social media expert."},
                 {"role": "user", "content": user_input.idea}
-            ]
+            ],
+            response_format={ "type": "json_object" }
         )
-        
-        # In a full build, you would parse this JSON and pass the 'image_prompt's 
-        # to an image generation API here before returning the final payload.
-        
         return {"status": "success", "data": response.choices[0].message.content}
-
     except Exception as e:
+        print(f"Error: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Run locally using: uvicorn main:app --reload
