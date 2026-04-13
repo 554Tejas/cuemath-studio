@@ -2,7 +2,7 @@ import os
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from openai import OpenAI
+import OpenAI
 from dotenv import load_dotenv
 
 # Load local .env file (for local testing only)
