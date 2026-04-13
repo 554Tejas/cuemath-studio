@@ -11,7 +11,7 @@ function App() {
     setLoading(true);
     try {
       // REPLACE the URL below with your actual Render URL
-      const response = await axios.post('https://cuemath-studio-2.onrender.com//generate-creative', {
+      const response = await axios.post('https://cuemath-studio-2.onrender.com/generate-creative', {
         idea: idea,
         format: 'carousel'
       });
