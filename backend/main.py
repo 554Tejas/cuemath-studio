@@ -1,9 +1,15 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-import openai
-import os
+from openai import OpenAI
 from dotenv import load_dotenv
+
+api_key = os.getenv("OPENAI_API_KEY")
+if not api_key:
+    # This prevents a 500 error by giving a clear message
+    print("CRITICAL ERROR: OPENAI_API_KEY is not set in environment variables.")
+
+client = OpenAI(api_key=api_key)
 
 load_dotenv()
 
